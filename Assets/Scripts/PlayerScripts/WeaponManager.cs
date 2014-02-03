@@ -14,7 +14,7 @@ public class WeaponManager : MonoBehaviour {
 	public RopeLogic hookScript;
 	[HideInInspector]
 	public Transform crosshair;
-
+	
 	void Awake()
 	{
 		crosshair = transform.FindChild ("Crosshair");

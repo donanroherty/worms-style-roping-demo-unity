@@ -1,0 +1,54 @@
+HOW SKYSHOP HANDLES HDR DATA
+========================
+
+
+Skyshop's art pipeline is centered around a fast and compact compression of High Dynamic Range images into four 8-bit color components: Red, Green, Blue, and Multiplier, known as RGBM encoding. This can be stored in any standard image format with an alpha channel, for instance PNG or Targa. RGBM encoding is very small compared to floating-point data, and very fast to decode in a shader compared to RGBE encoding.
+
+Unity does not natively support any HDR file formats. Even its OpenEXR support is clamped and mainly intended for internal, lightmapping use. Image files Unity does not recognize cannot be previewed in the Inspector or bound as textures, so getting useable HDR data into a project can be tricky.
+
+Skyshop solves this problem with Asset Post-Processors, specifically the HDRProcessor.cs script found in Marmoset/Skyshop/Editor/. The HDRProcessor is a custom importer script which runs automatically when an HDR format it recognizes is being added to the project. When the HDRProcessor understands the following file formats:
+- Radiance (.HDR, .RGBE, .XYZE)
+- Portable Bit Map (.PBM, .PFM)
+
+When HDRProcessor catches one of these files being imported, it performs the following steps:
+
+- Reads the file contents from disk (ex: mySky.hdr)
+- Encodes the HDR image data as RGBM
+- Writes a new .PNG file the RGBM encoding to disk (ex: mySky.png)
+- Adds the new .PNG asset to the project
+
+This new .PNG asset will look strange when previewed due to its encoding, typically bright orange and banded, but it contains all the HDR information of the original image, and can be decoded on the fly by Marmoset shaders and the Skyshop tool suite.
+
+The HDR post-processor will also run if Unity detects a change in any of the HDR files it has already processed. This means you can edit your HDR source images outside of Unity, as you would any other texture data, and Unity will auto-synchronize the RGBM versions.
+
+Any texture slots in Skyshop that accept RGBM data will also feature a preview of the image decoded, to make sure everything is being stored properly.
+
+Note: HDR source images with _noimport in their filenames will be skipped by HDRProcessor, ex: "mySky_noimport.hdr" will not generate "mySky_noimport.png".
+
+
+---
+
+
+KNOWN ISSUES & QUALITY GUIDELINES
+When previewing RGBM images without decoding them, you’ll notice bands of RGB color that correspond to similar bands in the alpha channel. Because RGBM encoding introduces a strong correlation between each pixel's RGB color and alpha value, any sort of filtering or blending of pixels between these bands will cause artifacts in the decoded image. Here are a list of guidelines to help you avoid accidentally introducing artifacts into your RGBM image data:
+
+
+COMPRESSION
+It is recommended you never use texture compression on RGBM assets.
+RGBM files store crucial information in the alpha channel, so avoid texture compression algorithms that affect the alpha channel (such as DXT). Degradation of the RGB channels is more acceptable but the alpha channel is important to keep intact.
+
+
+FILTERING
+Bilinear texture filtering may cause some artifacts but they are largely not noticeable. Texture filtering is, in general, encouraged for RGBM assets.
+
+
+MIPMAPS
+Down-sampling an RGBM image, however, will introduce very apparent banding artifacts. This is most noticeable in auto-generated mipmap levels. It is recommended you not enable mipmapping on RGBM assets in Unity. 
+
+
+RESIZING
+It is also recommended that you not resize RGBM assets using the “Max Size” feature. Whenever possible, recompute an RGBM asset at the desired size instead of resizing it.
+
+
+Note: When dealing with cubemaps, even toggling the mipmapping on and off again may introduce banding artifacts as Unity reprocesses the image data it stores internally. It is best to leave these settings alone and recompute the assets at the desired resolution and in the desired configuration.
+

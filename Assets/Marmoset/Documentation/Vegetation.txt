@@ -1,0 +1,24 @@
+VEGETATION SHADERS
+===============
+
+Skyshop 1.04 introduces image-based lighting shaders for Unity's built-in vegetation system. Some vegetation is transparently converted to use Skyshop's lighting system. Other vegetation art assets need some manual changes to materials and which shaders they use.
+
+SETTING UP GRASS & DETAIL MESHES
+---
+Add grass or detail meshes as you normally would, through the "Paint Details" submenu (many-trees icon). Grass and detail meshes utilize the concept of "replacement shaders", which automatically replace Unity's grass and detail shaders with Marmoset ones, adding instant IBL support to existing scenes.
+
+
+SETTING UP TREES
+---
+Trees can also be painted onto the terrain as usual. Unity's tree system however does not support replacement shaders and the art assets have to be modified by hand to use Marmoset shaders and materials.
+
+Unity has two types of tree assets: Soft-Occlusion Trees, like the Unity palm tree included in the standard "Terrain Assets" package; and Tree-Creator Trees, such as "Big Tree" included in the "Tree Creator" package.
+
+SOFT-OCCLUSION TREES
+These trees are assigned two types of materials, "Nature/Soft-Occlusion Bark" and "Nature/Soft-Occlusion Leaves". Select the tree prefab asset you want to edit in your project. Change its materials to use the "Marmoset/Nature/Soft-Occlusion Bark" and "Marmoset/Nature/Soft-Occlusion Leaves" shaders instead. Finally, open the terrain "Paint Trees" submenu of the terrain inspector and click "Refresh" to make sure your material changes are propagated to the terrain system.
+
+TREE-CREATOR TREES
+These trees are created and modified using the Tree Creator system that shows up in the inspector. They often use multiple materials for the trunk, branches, and leaves. Each of these materials needs to be changed from "Nature/Tree Creator Leaves" or "Nature/Tree Creator Bark" to the equivalent shaders found under "Marmoset/Nature/". 
+
+IMPORTANT: The Tree Creator system does not use the materials you edited directly. Instead the materials are optimized and rebuilt for internal use by the tree system, which means you have to make sure the Tree Creator registers your changes and rebuilds its internals. To do this, select any branch or leaf node in the Tree Creator graph, then select the root node (the base of the tree) again. This should prompt a progress bar for the optimization.
+Finally, you will need to force the painted trees on the terrain to update as well; use the "Refresh" button of the "Paint Trees" submenu.

@@ -1,0 +1,121 @@
+MATERIAL GUIDE
+===========
+
+Skyshop comes bundled with many shaders for making use of the image-based lighting (IBL) data it generates. All of these shaders are based on one core shader but have various features enabled or disabled for the sake of performance.
+
+
+Always pick the lowest minimum feature-set to meet your needs for optimal performance. Switching between many materials at runtime is typically not an issue but rendering with empty texture slots and unnecessary shading math can be.
+
+
+---
+
+
+There are four base variations of the core shader:
+
+
+DIFFUSE IBL
+Renders only diffuse lighting (per-pixel) from direct and image-based light sources.
+
+
+SPECULAR IBL
+Renders both diffuse and specular lighting from direct and image-based light sources.
+
+
+BUMPED DIFFUSE IBL
+Renders normal-mapped, diffuse lighting from direct and image-based light sources.
+
+
+BUMPED SPECULAR IBL
+Renders normal-mapped, diffuse and specular lighting from direct and image-based light sources.
+
+
+---
+
+
+These four base variations are repeated in the Transparent/ and Self-Illumin/ directories, adding blending and self-illumination features respectively.
+
+
+SELF-ILLUMIN
+Shaders in this category feature Glow Maps, Glow Color and a Glow Strength multiplier. Glow is not affected by lighting or shadows, and gets added on top of direct and image-based shading.
+        GLOW COLOR - Overall tint for the self-illumination portion of the material.
+        GLOW STRENGTH - Multiplier on the self-illumination portion of the material.
+        GLOW MAP - RGB channels act as Glow Color does, A channel acts as a mask
+
+
+TRANSPARENT
+Shaders in this category are alpha-blended based on the Diffuse Color and Texture alpha channels. 
+
+
+TRANSPARENT CUTOUT
+Shaders in this category are alpha-blended as above, but also discard pixels with an alpha value that falls below a cut-off threshold, lending to better performance and crisp edges on blended surfaces.
+
+
+TRANSPARENT SIMPLE GLASS
+Shaders in this category are blended using a combination of alpha-blended diffuse color and additively blended specular reflections. This gives a closer approximation of glass-like transparency, with diffuse opacity representing the clarity or "smokiness" of the glass, while specular reflection is still light bouncing off the glass surface.
+
+
+SIMPLE GLASS SELF-ILLUMIN
+This category contains only one shader for now, Bumped Specular IBL. Transparent, normal-mapped, and glowing: this shader does it all. Every Marmoset shader feature is enabled, which makes it expensive but handy for playing around with all that Marmoset shaders have to offer.
+
+
+MOBILE
+The mobile category contains duplicates of many of the above but with optimizations and feature restrictions suited for iOS and Android GPUs.
+
+
+IBL FAST
+Mobile shaders with the "Fast" postfix render without direct specular lighting and combine the diffuse & specular maps into one texture lookup. Diffuse color is in RGB, while A is used as both gloss and the specular mask.
+
+
+OCCLUSION
+These shaders have an additional texture slot for ambient occlusion, sampled with a secondary uv channel (uv1). The occlusion map masks diffuse and specular image-based lighting separately. Diffuse occlusion is in the red channel, Specular occlusion in the green channel.
+
+
+VERTEX OCCLUSION
+Shaders in this category use vertex color (when present in the geometry) to perform diffuse and specular ambient occlusion on the image-ased portion of lighting. The red channel occludes diffuse IBL and the green channel the specular IBL term.
+
+
+VERTEX COLOR
+Shaders in this category use vertex colors (when present in the geometry) that tints the diffuse color and map.
+
+
+VERTEX LIT
+Ultra light-weight set of shaders in the VertexLit/ directory, written without the use of surface shaders. These shaders feature no shadowing or lightmapping, just image-based lighting, direct diffuse lighting, and SH light probes. Direct diffuse lighting is done per vertex and softened with the equation pow((L.N+0.5),2).
+
+
+---
+
+
+CUSTOM LIGHTING CUBEMAPS
+It is possible to assign different Skyshop lighting cubemaps to individual materials. This can be useful when dealing with multiple lighting conditions within the same scene. For example all objects deemed to be indoors could be lit with one set of cubemaps, and all others with an outdoor set. Leaving these cubemap slots blank will use whatever lighting data is bound globally by the active Sky object.
+
+
+---
+
+
+TEXTURING
+All Marmoset shaders come with a Diffuse texture slot, and each shader variation adds texture slots specific to its feature-set. All textures are applied to the mesh's primary set of texture-coordinates.
+
+TEXTURE TILING
+Unity also exposes per-texture tiling and offset controls with each texture slot. However in shaders with many texture slots, this feature can add up and hit shader interpolant-limits very quickly. For this reason, Skyshop's shaders are forced to share tiling coordinates. The Diffuse texture slot tiling coordinates are used to tile all other textures (normal map, specular map, glow map). An unfortunate limitation but in practice rarely an issue.
+
+DIFFUSE
+Diffuse(RGB) Alpha(A) - This is the base color of the material. The optional alpha channel of this texture is used for transparency in all Transparent/ shaders. This texture's tiling and offset coordinates are shared by all other textures.
+
+SPECULAR
+Specular(RGB) Gloss(A) - Specular highlights and reflections are tinted by the RGB component of this texture, and the optional alpha channel contains a multiplier on the material's shininess/gloss value.
+
+NORMAL MAP
+Normalmap(RGB) - This texture slot accepts tangent-space, RGB normal-maps, the alpha channel is ignored. The texture assets applied to this slot must be of Texture Type: "Normal map". Unity will warn you and show a "Fix Now" button if this is not the case.
+
+GLOW MAP
+Glow(RGB) Diffuse Emission(A) - The RGB channels of the Glow Map are multiplied by the Glow Color and Glow Intensity parameters and added on top of the standard, phong-shaded result of this material.
+
+The Alpha channel contains a Diffuse Emission Mask, which combined with the Diffuse Emission Strength parameter, controls how much of the material's diffuse color is added on top of the standard, phong-shaded result.
+
+Note: the difference between Diffuse Emission and Glow becomes important when baking lightmaps or probes. Diffuse Emission adds diffuse-colored light at emission-masked intensity into the scene when baking but Glow color and intensity are ignored; this is a limitation of Beast.
+
+OCCLUSION MAP
+Occlusion Diff(R) Spec(G) - This texture is used to shadow or mask off the ambient, image-based portion of lighting. The R channel masks diffuse IBL and the G channel masks specular IBL. The texture is sampled using a second set of texture coordinates (uv1), which must be already present in the mesh asset.
+
+Note: UV1 is the texture coordinate set Unity can generate for lightmapping. It is possible to overwrite uv1 accidentally when lightmapping meshes with an occlusion map. It is also possible to have Unity generate uv1 coordinates and use the lightmap texture Beast bakes in this texture slot.
+

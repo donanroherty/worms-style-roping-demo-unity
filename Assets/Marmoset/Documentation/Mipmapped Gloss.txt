@@ -1,0 +1,17 @@
+SKYSHOP & MIPMAPPED GLOSS
+=====================
+
+
+Skyshop generates custom mip levels for specular cubemaps. Each mip level is computed separately with a different gloss value. In the shader, the gloss map is used to pick between these mip levels for per-pixel dull/polished variation. Unity, however, auto-generates mip levels by scaling down the original image, overwriting all of Skyshop’s hard work. Skyshop gets around this problem with an asset post-processor: CubeMipProcessor.cs, found in Marmoset/Skyshop/Editor/.
+
+
+When Skyshop generates the custom mip levels, it also saves them as 2D images and makes them child-assets of the cubemap. The CubeMipProcessor looks for cubemaps in the project with these child-assets, and regenerates a cubemap with the custom mip levels.
+
+
+This process runs every time a cubemap asset is imported into the project, re-imported using the Project window’s right-click menu, and every time an asset is loaded in Play mode. 
+
+
+Unity also auto-generates mipmaps on assets any time its inspector properties are changed, for instance when the Face Size is changed or the Linear checkbox toggled. This auto-generation will discard Skyshop’s gloss mips.
+
+
+To reload Skyshop mips from the cubemap’s child images, right-click the asset and select “Reimport”.

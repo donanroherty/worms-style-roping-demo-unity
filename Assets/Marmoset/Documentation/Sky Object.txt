@@ -1,0 +1,115 @@
+SKY INSPECTOR
+==========
+
+When a Sky object in the scene is selected (in edit-mode) two things will happen:
+1. The sky will be set as the active sky in the viewport until a different sky is selected.
+
+
+2. A custom interface will appear in Unity's Inspector tab for editing the Sky's properties and selecting its lighting cubemaps.
+
+
+CUBEMAP SLOTS
+The custom inspector is very similar to the Skyshop window, with the same cubemap slots, preview images, and * R P C preview options. 
+
+
+HDR
+Each slot will also have an HDR checkbox which tells the Sky and Marmoset shaders to treat the image data as RGBM-encoded. 
+
+
+Note: if RGBM cubemaps are rendered without this checkbox checked, they will still appear somewhat normal but too dark.
+
+
+Dragging different cubemap assets into these slots will change the composition of the Sky object instantly; no recomputation is necessary. Recomputing an input panorama with this sky's cubemaps as output targets will update this Sky object, as well as the editor viewport, automatically.
+
+
+---
+
+
+Additional controls below the sky previews adjust global shader parameters sent to all Marmoset IBL shaders. For Sky object implementation details, see the Marmoset/Skyshop/Script/Sky.cs file and Scripting.txt in the docs/ folder.
+
+
+AUTO-APPLY
+If enabled, this sky will be automatically applied to the scene upon application start(Start), level load (OnLevelWasLoaded), and whenever selected in the editor viewport. If disabled, this sky can only be bound to the scene by calling the Apply() function in a script. Disabling Auto-Apply can be useful when working with multiple skies or sky probes.
+
+
+APPLY TO VIEWPORT
+Manually applies this sky to the scene in the editor viewport. Needed to preview non-auto-applied skies while in edit mode.
+
+
+SHOW SKYBOX
+Toggles rendering the Skybox cubemap as a backgound image. When enabled, the RenderSettings -> Skybox Material is overwritten with an internally constructed material using the "Marmoset Skybox IBL" shader, found in Marmoset/Shader/Resrouces/. Disable if you want to use a solid color or your own backdrop shader. 
+Note:  It is important this shader remain in the Resources directory or it may not be included with builds.
+
+
+LINEAR SPACE
+For proper handling of gamma correction and image exposure, this checkbox must match your project color-space settings.
+
+
+Under Edit->Project Settings->Player in the Other Settings roll-out section, you will find "Color Space". If set to "Linear", gamma correction is enabled for the project and all Sky objects should also have the "Linear Space" checkbox enabled. If Color Space is 
+set to “Gamma”, Sky object “Linear Space” should be false.
+
+
+Note: A mismatch in color-spaces will result in lighting that looks very dark and desaturated or very bright and overly saturated.
+
+
+Note: some platforms such as iOS do not support gamma correction, so this project setting is hidden but may remain unchanged. It is important to configure Sky object color space to match what the target platform will be rendering in.
+
+
+AUTO-DETECT COLOR SPACE
+When enabled, the Sky Inspector attempts to detect project gamma correction settings and configure the Linear Space checkbox correctly. The auto-detection may not be perfect (see note above), disable this option for manual control.
+
+
+MASTER INTENSITY
+A multiplier on the three other Intensity sliders below it. Generally it is advised to adjust this slider and treat the other three as balance ratios between the diffuse, specular, and background cubemaps.
+
+
+SKYBOX INTENSITY
+An exposure multiplier on the background sky image. Does not affect scene lighting, just the backdrop.
+
+
+DIFFUSE INTENSITY
+A multiplier on the amount of image-based, diffuse light this sky contributes to the scene. Does not affect lightmaps, light-probes, direct lights, or self-illuminated materials in the scene.
+
+
+SPECULAR INTENSITY
+A multiplier on the amount of image-based, specular reflection this sky contributes to the scene. Does not affect lightmaps, light-probes, direct lights, or self-illuminated materials in the scene.
+
+
+CAMERA EXPOSURE
+A multiplier in Marmoset shaders applied to all light reaching the viewer's eyeball. This includes image-based lighting, direct lighting, lightmaps, lightprobes, and self-illuminated Marmoset materials. 
+
+This slider can be treated as a scene exposure parameter without the need for a screen-space post-effect. It can be adjusted cheaply in real time through a script, modifying the Sky.camExposure parameter.
+
+
+LIGHTMAPPED DIFFUSE MULTIPLIER
+A multiplier on the diffuse intensity setting that only affects lightmapped geometry. Used for adjusting how much image-based diffuse illumination is added to lightmapped surfaces.
+(See Lightmapping.txt for more details).
+
+
+LIGHTMAPPED SPECULAR MULTIPLIER
+A multiplier on the specular intensity setting that only affects lightmapped geometry. Used for adjusting how much image-based specular reflection is added to lightmapped surfaces.
+(See Lightmapping.txt for more details).
+
+---
+
+SKY ROTATION
+The sky object can also be moved around using Unity's translate/rotate/scale widgets. Scale and translation are ignored but the rotation part of the transform constitutes sky rotation.
+
+
+Skies can be rotated about any axis, the lighting and skybox background will follow it. Usually only rotation about the Y-axis is desired.
+
+
+CHILD LIGHTS
+It is often useful to add a directional light into the scene to represent the sun, and treat image-based lighting as the ambient term. It can be helpful to make these light objects children of the Sky object, this way sky rotation will affect their direction as well.
+
+
+Directional child-lights of a Sky object will automatically be enabled and disabled whenever the Sky object is activated/deactivated. This makes it easy to script changing skies and having sunlight direction and properties change along-side it.
+
+
+ALIGNING CHILD LIGHTS
+It is also possible to display directional lights in your scene, as overlayed on any of the cubemap preview images in Skyshop or the Sky Inspector. Press the * button to toggle the overlay, only directional lights will be displayed and just their rotation will change their position relative to the panoramic preview.
+
+
+When the overlay is enabled, you can also use the eyedropper button to sample the selected light's color and intensity directly from the cubemap.
+
+

@@ -1,0 +1,98 @@
+﻿SKY SCRIPT
+=======
+
+
+Sky objects are implemented as a MonoBehaviour script attached to an empty GameObject in the scene (though the script can be applied to an existing game object just as easily). The script's sole purpose is to manage shader parameters and cubemap textures, and bind them globally to Unity's shader system when appropriate. This happens in public void Apply().
+
+
+The following Sky object parameters are publicly exposed, mostly for the sake of the Sky inspector, and correspond directly to the Sky Inspector UI with more or less the same parameter names.
+
+
+IMPORTANT! Any of these parameters can be changed at run-time, followed by a call to Apply(). Without Apply(), the changes will not take effect.
+
+
+public Cubemap diffuseCube
+public Cubemap specularCube
+public Cubemap skyboxCube
+        
+public float masterIntensity
+public float skyIntensity
+public float specIntensity
+public float diffIntensity
+public float camExposure
+public float specIntensityLM
+public float diffIntensityLM
+        
+public bool hdrSky
+public bool hdrSpec
+public bool hdrDiff
+        
+public bool showSkybox
+public bool linearSpace
+public bool autoDetectColorSpace
+
+
+In addition there is one static member-variable to the Sky class:
+
+
+public static Sky activeSky;
+
+
+This is the currently bound Sky object. There can be only one, and its parameters are what have been sent to Unity’s rendering and shader system. 
+
+
+If a Sky object is present and enabled in the scene, the Sky.activeSky variable is guaranteed to be defined by the time Update() starts being called. All skies try activating themselves during the MonoBehaviour Start() cycle to ensure some Sky is active, but this is execution-order-dependent, and not guaranteed during the Start() cycle.
+
+
+Public functions of Sky include:
+
+
+public void Apply();
+public void ApplySkyTransform();
+public void toggleChildLights(bool);
+
+
+Apply()
+Unbinds the activeSky, disables any of its child-lights, activates its own child-lights, and configures the Marmoset shaders. The shader configuration includes computing exposures based on project color-space, and uploading cubemaps. 
+
+
+ApplySkyTransform()
+Uploads changes to the Sky object transform matrix to the shaders. This gets called from inside Apply() as well as every frame at Update() time. In Unity 4 and up, ApplySkyTransform() is not called out of Update() unless Sky.transform.hasChanged is true.
+
+
+OnDrawGizmos() 
+Is another private function which draws the Cubemap light icon into the Editor viewport. This icon can be found in the Gizmos/ directory of the Skyshop package, which cannot be moved out of the root Assets/ directory.
+
+
+Apply( Renderer )
+It is also possible to call Sky.Apply on a specific Renderer, which lets you detect when a GameObject changes rooms or environments and bind an appropriate sky to it without changing global parameters. Passing a GameObject's renderer member varialbe to Apply will bind all the same shader variables but to that GameObject only, and can be invoked every frame.
+
+
+Sky.SetUniformOcclusion( Renderer, float diffuse, float specular )
+A static function of the Sky class that sets multipliers on the diffuse and specular IBL intensity parameters of a given renderer. This allows you to dynamically tune the contribution of image-based light per object and implement your own macro-scale occlusion. An example would be a character going deeper into a cave would be lit by less and less IBL based on some scripted algorithm or shadow sensor.
+
+
+LOGO SCRIPT
+========
+Also included with Skyshop is an easy utility for telling the world your application uses Marmoset Skyshop.
+
+
+Logo.cs is a simple camera script for displaying a "Rendered With Marmoset Skyshop" logo (or any other image) in the corner of your app.
+
+
+Simply drag the script onto any camera object in your project and it will become active in Play-mode. The logo placement, color, and opacity are all customizable through the camera inspector.
+
+
+LOGO TEXTURE - Pick a texture, any texture, preferably one with an alpha channel.
+
+
+COLOR - Tint away.
+
+
+LOGO PIXEL OFFSET - x and y offsets, in absolute pixels, from the corner of the screen the logo is currently tied to (see PLACEMENT).
+
+
+LOGO PERCENT OFFSET - x and y offsets in terms of viewport width and height, as percentage values (0% to 100%). Great for resizable windows.
+
+
+PLACEMENT - Select which corner of the screen the logo and its offsets are relative to.

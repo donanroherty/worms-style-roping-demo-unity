@@ -1,0 +1,104 @@
+LIGHTMAPPER EXTENDED & BEAST
+=======================
+
+Beast is the lightmapping and light-probe baking middleware included with Unity. Unity exposes most of Beast's baking features under Window -> Lightmapping, however some advanced baking features remain hidden. 
+
+
+It is still possible to edit these hidden settings through a BeastSettings.xml file in your Unity project. Lightmapper Extended is an Asset Store tool for managing these xml files and exposing the hidden Beast settings with a handy graphical interface. 
+
+
+Skyshop comes bundled with Lightmapper Extended and has integrated all of its image-based lighting settings, which can be found under the BEAST GLOBAL ILLUM OPTIONS tab.
+
+
+Many thanks to Michael Stevenson for developing Lightmapper Extended and helping us with the Skyshop integration!
+
+
+---
+
+
+BEAST GLOBAL ILLUM OPTIONS
+====================
+GENERATE BEAST SETTINGS FILE
+If no BeastSettings.xml file exists for the current scene, this button will generate one and add it to the project.
+
+
+ENVIRONMENT TYPE
+Beast, when baking, looks out from every point on a surface it is lightmapping to see what geometry or light-sources it may see. It can treat areas where it sees no geometry at all in one of  three ways:
+None - Consider the the background to be black, contributing no color or light to the baked surface.
+Skylight - Use a solid color and treat the sky as one big, uniform light-source.
+IBL - Use a panoramic sky image as the backdrop, IBL standing for “Image-Based Lighting”.
+
+
+IBL is the option for you as a Skyshop user. Skyshop can generate this sky image and configure Beast to use it when baking.
+
+
+INTENSITY
+This is a multiplier on the contribution of whatever environment type was chosen above. When using a simple approximation of IBL sky lighting (see “Emit Light” below), this multiplier may need to be increased to 2 or 3 for results that match Skyshop’s lighting data.
+
+
+---
+
+
+IMAGE PATH
+An absolute file-path to a .hdr or .exr panorama image. The skyshop “GI” button exports a temporary image and fills this file-path out automatically.
+
+
+IMAGE BLUR
+Before the baking process, Beast can optionally blur the sky image to reduce noise artifacts. Generally slow and unnecessary but can be tweaked if the baked results are noisy or Beast’s raytracer is missing small, bright pixels in the sky image.
+
+
+DOME SWAP Y/Z
+By default Beast considers the Y-axis to be up and orients the dome with our sky image on it accordingly. Checking this box sets the Z-axis to be up instead. 
+
+
+DOME ROTATION
+Rotates the sky dome about the up axis before baking, to align it to the scene skybox. Skyshop's skies are 90 degrees behind Beast's sky domes, meaning at Skyshop Sky rotation 0, Beast Dome Rotation should be set to 90.
+
+
+ALIGN TO ACTIVE SKY
+If a Skyshop Sky is active in the scene, sets the Dome Rotation above to match the the Sky object's transform. Beast only has settings for orientation around the up axis, so only the Y-rotation of the Sky object's transform is taken into account.
+
+
+---
+
+
+EMIT LIGHT
+Toggles between true image-based environment lighting and a simpler approximation which filters the final-gather computation with the sky image. "Emit Light" mode takes groups of pixels from the sky image and uses them as distant light sources in the scene when baking. This process is much slower but can lead to better results as actual light is added into the scene by the sky. Emit Light mode is also required for the sky image to contribute bounced light to the scene.
+
+
+SAMPLES
+Number of samples to be taken from the sky image. Higher sample counts help reduce shadow noise and generally improve lighting quality.
+
+
+IBL INTENSITY
+Multiplier on all the lights resulting from sampling the sky image.
+
+
+DIFFUSE
+If enabled diffuse light is pulled from the sky image sample lights. If disabled, Final Gather is used for the diffuse component instead.
+
+
+SPECULAR
+An “Emit Light” mode feature which, if enabled, bakes specular highlights into lightmaps as well. This is generally not desired.
+
+
+SHADOWS
+An “Emit Light” mode feature which enables the light sources generated from the sky image to cast shadows while baking.
+
+
+---
+
+
+COMBINING LIGHTMAPS & REAL-TIME SKY LIGHTING
+========================================
+The Sky object now comes with diffuse and specular intensity multipliers that only affect lightmapped objects, in order to tweak exactly how much image-base sky lighting is added on top of lightmap illumination. With the lightmapping tools described above, it is possible to bake all image-based lighting into lightmaps, along-side your direct light illumination. This is perhaps the most accurate solution to combining IBL and lightmaps; shadowing and ambient occlusion are all taken care of naturally and correctly by Beast's raytracer. In this case you can disable the Skyshop sky lighting entirely, baking both the ambient and direct illumination into the same lightmap. You will still need a Skyshop sky in the scene to light dynamic objects, however, as well as provide image-based specular reflections.
+
+It is also possible to only bake direct illumination and leave image-based, ambient lighting up to the sky entirely. This comes with the benefit of being flexible to sky changes. If the IBL term is not baked into the lightmap, skies can be re-exposed, rotated, or even swapped out entirely at runtime. The downside is no occlusion term from the lightmap can shadow the IBL and indoor scenes may look too bright. This can also be adjusted for with the lightmap multiplier values.
+
+
+LIGHTMAPPED DIFFUSE MULTIPLIER
+A multiplier on the diffuse intensity setting for adjusting how much image-based diffuse illumination lightmapped surfaces receive.
+
+
+LIGHTMAPPED SPECULAR MULTIPLIER
+A multiplier on the specular intensity setting for adjusting how much image-based specular illumination lightmapped surfaces receive.

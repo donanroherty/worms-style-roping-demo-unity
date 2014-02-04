@@ -130,11 +130,8 @@ MonoBehaviour:
   hooked: 0
   hook: {fileID: 0}
   anchors: []
-  Length: 0
   linecastOffset: .0199999996
   returnLCDist: .300000012
-  ropeClimbSpeed: .150000006
-  maxLength: 50
   combinedAnchorLen: 0
   totalLength: 0
 --- !u!120 &12000000

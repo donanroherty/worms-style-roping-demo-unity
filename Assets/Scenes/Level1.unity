@@ -2142,7 +2142,6 @@ GameObject:
   - 92: {fileID: 526901304}
   - 124: {fileID: 526901303}
   - 81: {fileID: 526901302}
-  - 114: {fileID: 526901307}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2180,7 +2179,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: .192156866, g: .301960796, b: .474509805, a: .0196078438}
+  m_BackGroundColor: {r: .176470578, g: .176470578, b: .176470578, a: .0196078438}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -2211,26 +2210,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1781604777}
---- !u!114 &526901307
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 526901301}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0923359e9e352a4b9b11c7b7161ad67, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Radius: .129999995
-  m_SampleCount: 2
-  m_OcclusionIntensity: 4
-  m_Blur: 1
-  m_Downsampling: 1
-  m_OcclusionAttenuation: 1
-  m_MinZ: .00999999978
-  m_SSAOShader: {fileID: 4800000, guid: 43ca18288c424f645aaa1e9e07f04c50, type: 3}
-  m_RandomTexture: {fileID: 2800000, guid: a181ca8e3c62f3e4b8f183f6c586b032, type: 3}
 --- !u!1001 &608894063
 Prefab:
   m_ObjectHideFlags: 0
@@ -5425,6 +5404,7 @@ GameObject:
   - 4: {fileID: 1385122524}
   - 33: {fileID: 1385122523}
   - 23: {fileID: 1385122521}
+  - 96: {fileID: 1385122522}
   m_Layer: 2
   m_Name: PlayerMesh
   m_TagString: Untagged
@@ -5444,7 +5424,7 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: f0b8492df89963041843b9008d669b64, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -5453,6 +5433,48 @@ Renderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_SortingLayerID: 0
+--- !u!96 &1385122522
+TrailRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1385122520}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: f0b8492df89963041843b9008d669b64, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+  m_Time: .200000003
+  m_StartWidth: .5
+  m_EndWidth: .100000001
+  m_Colors:
+    m_Color[0]:
+      serializedVersion: 2
+      rgba: 4294967295
+    m_Color[1]:
+      serializedVersion: 2
+      rgba: 4294967295
+    m_Color[2]:
+      serializedVersion: 2
+      rgba: 4294967295
+    m_Color[3]:
+      serializedVersion: 2
+      rgba: 4294967295
+    m_Color[4]:
+      serializedVersion: 2
+      rgba: 16777215
+  m_MinVertexDistance: .100000001
+  m_Autodestruct: 0
 --- !u!33 &1385122523
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -6651,7 +6673,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 1781604777}
   - 50: {fileID: 1781604779}
-  - 61: {fileID: 1781604778}
+  - 58: {fileID: 1781604778}
   - 231: {fileID: 1781604782}
   - 114: {fileID: 1781604780}
   - 114: {fileID: 1781604783}
@@ -6677,8 +6699,8 @@ Transform:
   - {fileID: 526901306}
   - {fileID: 1385122524}
   m_Father: {fileID: 0}
---- !u!61 &1781604778
-BoxCollider2D:
+--- !u!58 &1781604778
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
@@ -6686,7 +6708,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Material: {fileID: 6200000, guid: 3d5a5b08d104a0f40b2233c9c9226036, type: 2}
   m_IsTrigger: 0
-  m_Size: {x: 1, y: 1}
+  m_Radius: .5
   m_Center: {x: 0, y: 0}
 --- !u!50 &1781604779
 Rigidbody2D:

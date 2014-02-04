@@ -151,6 +151,7 @@ public class RopeLogic : Projectile {
 	{
 		hooked = true;
 		collider2D.enabled = false;
-		rigidbody2D.isKinematic = true;
+		//rigidbody2D.isKinematic = true;
+		Destroy (rigidbody2D);
 	}
 }

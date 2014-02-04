@@ -22,6 +22,7 @@ public class RopeLogic : Projectile {
 		transform.name = "RopeHook";
 		Physics2D.IgnoreLayerCollision (layerPlayer, layerHook, true);
 		rigidbody2D.velocity = transform.TransformDirection(Vector3.up * speed);
+		rigidbody2D.drag = weaponManager.ropeHookSpeedDamp;
 		
 		spring = owner.GetComponent<SpringJoint2D>();
 		spring.collideConnected = true;
@@ -53,22 +54,27 @@ public class RopeLogic : Projectile {
 	{
 		Debug.DrawLine (owner.transform.position, transform.position);
 		RaycastHit2D hit = Physics2D.Linecast (owner.transform.position, transform.position);
-		if(hit)
+
+		if(hit && hit.collider.gameObject.CompareTag ("Hookable"))
 		{
 			transform.position = hit.point + (hit.normal.normalized * linecastOffset);
 			ProcessHit ();
 		}
+		else
+			return;
 	}
 	//Manages the creation and removal of joints in a rope
 	void RopeJointManager()
 	{
 		//Creates an anchor point when a linecast from player to previous anchor is broken
 		RaycastHit2D hit = Physics2D.Linecast (owner.transform.position, anchors[anchors.Count-1]);
-		if(hit)
+
+		if(hit && hit.collider.gameObject.CompareTag ("Hookable"))
 		{
 			Vector2 anchorPoint = hit.point + (hit.normal.normalized * linecastOffset);
 			AddAnchor(anchorPoint);
 		}
+
 		//Removes anchors when player has line of sight on the previous anchor
 		if(anchors.Count > 1)
 		{
@@ -133,11 +139,14 @@ public class RopeLogic : Projectile {
 	
 	void OnCollisionEnter2D(Collision2D col) 
 	{
-		if(col.gameObject.tag == "Hookable")
+		if(!col.gameObject.CompareTag ("Hookable"))
+			return;
+		else
 		{
 			ProcessHit();
 		}
 	}
+
 	void ProcessHit()
 	{
 		hooked = true;

@@ -3,7 +3,8 @@ using System.Collections;
 
 public class WeaponManager : MonoBehaviour {
 
-	public float ropeHookSpeed = 25;
+	public float ropeHookSpeed = 150;
+	public float ropeHookSpeedDamp = 0.1f;
 	public float ropeClimbSpeed = 1;
 	public float maxLength = 30;
 	public bool hooked;

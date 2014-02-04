@@ -30,17 +30,21 @@ public class PlayerController : MonoBehaviour {
 
 		physMatBouncy = Resources.Load<PhysicsMaterial2D>("p_BouncyPhysMat");
 		physMatRegular = Resources.Load<PhysicsMaterial2D>("p_regularPhysMat");
+
+	//	Physics2D.IgnoreLayerCollision (2,31);
 	}
 		
 	void FixedUpdate()
 	{
 		grounded = Physics2D.OverlapCircle (groundCheck.transform.position, groundRadius, whatIsGround);
 
+		Vector2 newVelocity;
+		newVelocity = new Vector2(Input.GetAxis ("Horizontal"), 0);
+		if(newVelocity.magnitude > 1)
+			newVelocity.Normalize ();
+
 		if(grounded)
 		{
-			Vector2 newVelocity;
-			newVelocity = new Vector2(Input.GetAxis ("Horizontal"), 0);
-			
 			rigidbody2D.velocity += newVelocity * groundSpeed;
 			
 			float desiredSpeed = rigidbody2D.velocity.x;
@@ -56,8 +60,6 @@ public class PlayerController : MonoBehaviour {
 		else if(weaponManager.hook && weaponManager.hookScript.hooked)
 		{
 			{
-				Vector2 newVelocity;
-				newVelocity = new Vector2(Input.GetAxis ("Horizontal"), 0);
 				rigidbody2D.velocity += newVelocity * airSpeed;
 			}
 		}

@@ -4,6 +4,7 @@
 TagManager:
   tags:
   - Hookable
+  - Checkpoint
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX
@@ -36,7 +37,7 @@ TagManager:
   User Layer 28: 
   User Layer 29: 
   User Layer 30: 
-  User Layer 31: 
+  User Layer 31: Checkpoints
   m_SortingLayers:
   - name: Default
     userID: 0

@@ -13,7 +13,7 @@ void OnTriggerEnter2D(Collider2D col)
 		if(col.gameObject.tag == "Player")
 		{
 			PlayerStateManager pSM = col.GetComponent<PlayerStateManager>();
-			pSM.ManageKillZ();
+			pSM.KillPlayer();
 		}
 	}
 }

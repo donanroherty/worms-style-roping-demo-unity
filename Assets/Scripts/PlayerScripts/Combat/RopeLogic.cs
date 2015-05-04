@@ -21,11 +21,11 @@ public class RopeLogic : Projectile {
 		speed = weaponManager.ropeHookSpeed;
 		transform.name = "RopeHook";
 		Physics2D.IgnoreLayerCollision (layerPlayer, layerHook, true);
-		rigidbody2D.velocity = transform.TransformDirection(Vector3.up * speed);
-		rigidbody2D.drag = weaponManager.ropeHookSpeedDamp;
+		GetComponent<Rigidbody2D>().velocity = transform.TransformDirection(Vector3.up * speed);
+		GetComponent<Rigidbody2D>().drag = weaponManager.ropeHookSpeedDamp;
 		
 		spring = owner.GetComponent<SpringJoint2D>();
-		spring.collideConnected = true;
+		spring.enableCollision = true;
 		anchors = new List<Vector2>();
 		LR = gameObject.GetComponent<LineRenderer>();
 		LR.SetVertexCount (2);
@@ -150,8 +150,8 @@ public class RopeLogic : Projectile {
 	void ProcessHit()
 	{
 		hooked = true;
-		collider2D.enabled = false;
+		GetComponent<Collider2D>().enabled = false;
 		//rigidbody2D.isKinematic = true;
-		Destroy (rigidbody2D);
+		Destroy (GetComponent<Rigidbody2D>());
 	}
 }

@@ -45,22 +45,22 @@ public class PlayerController : MonoBehaviour {
 
 		if(grounded)
 		{
-			rigidbody2D.velocity += newVelocity * groundSpeed;
+			GetComponent<Rigidbody2D>().velocity += newVelocity * groundSpeed;
 			
-			float desiredSpeed = rigidbody2D.velocity.x;
+			float desiredSpeed = GetComponent<Rigidbody2D>().velocity.x;
 			
 			desiredSpeed = Mathf.Clamp (desiredSpeed, -groundSpeed, groundSpeed);
-			rigidbody2D.velocity = new Vector2(desiredSpeed, rigidbody2D.velocity.y);
+			GetComponent<Rigidbody2D>().velocity = new Vector2(desiredSpeed, GetComponent<Rigidbody2D>().velocity.y);
 
 			if(Input.GetButtonDown ("Jump"))
 			{
-				rigidbody2D.AddForce (new Vector2(0, jumpForce));
+				GetComponent<Rigidbody2D>().AddForce (new Vector2(0, jumpForce));
 			}
 		}
 		else if(weaponManager.hook && weaponManager.hookScript.hooked)
 		{
 			{
-				rigidbody2D.velocity += newVelocity * airSpeed;
+				GetComponent<Rigidbody2D>().velocity += newVelocity * airSpeed;
 			}
 		}
 
@@ -76,11 +76,11 @@ public class PlayerController : MonoBehaviour {
 
 	void ChangeCollMat(PhysicsMaterial2D physMat)
 	{
-		if(gameObject.collider2D.sharedMaterial != physMat)
+		if(gameObject.GetComponent<Collider2D>().sharedMaterial != physMat)
 		{
-			gameObject.collider2D.sharedMaterial = physMat;
-			gameObject.collider2D.enabled = false;
-			gameObject.collider2D.enabled = true;
+			gameObject.GetComponent<Collider2D>().sharedMaterial = physMat;
+			gameObject.GetComponent<Collider2D>().enabled = false;
+			gameObject.GetComponent<Collider2D>().enabled = true;
 		}
 	}
 }
